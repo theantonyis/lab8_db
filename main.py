@@ -1,10 +1,11 @@
 import datetime
-from sqlalchemy import create_engine, Column, Integer, String, Text, TIMESTAMP, select
+from sqlalchemy import create_engine, Column, Integer, String, Text, TIMESTAMP
 from sqlalchemy.orm import declarative_base, Session
 
 # Підключення до бази даних
 engine = create_engine('sqlite:///notes.db', echo=False)
 Base = declarative_base()
+
 
 # Оголошення класів моделей
 class Notes(Base):
@@ -19,9 +20,11 @@ class Notes(Base):
 # Створення таблиць
 Base.metadata.create_all(engine)
 
+
 # Створення сесії
 def create_session():
     return Session(engine)
+
 
 # Функція для створення нової замітки
 def create_note(session, title, content):
@@ -37,6 +40,7 @@ def get_all_notes(session):
     for note in all_notes:
         print(note.id, '\t', note.title, '\t', note.content, '\t', note.created_at)
 
+
 # Функція для оновлення замітки
 def update_note(session, id, new_title, new_content):
     notes_to_update = session.query(Notes).filter_by(id=id).first()
@@ -45,6 +49,7 @@ def update_note(session, id, new_title, new_content):
         notes_to_update.content = new_content
         session.commit()
 
+
 # Функція для видалення замітки
 def delete_note(session, id):
     note_to_delete = session.query(Notes).filter_by(id=id).first()
@@ -52,10 +57,12 @@ def delete_note(session, id):
         session.delete(note_to_delete)
         session.commit()
 
-def search_note (session, id):
+
+def search_note(session, id):
     note_to_search = session.get(Notes, id)
     if note_to_search is not None:
-        print(note_to_search.id, '\t', note_to_search.title, '\t', note_to_search.content, '\t', note_to_search.created_at)
+        print(note_to_search.id, '\t', note_to_search.title, '\t', note_to_search.content, '\t',
+              note_to_search.created_at)
     else:
         print("Така замітка не знайдена.")
 
@@ -63,6 +70,7 @@ def search_note (session, id):
 # Закриття сесії
 def close_session(session):
     session.close()
+
 
 # Приклад використання:
 session = create_session()
@@ -85,7 +93,6 @@ with session:
 
     print("Знайдена замітка: ")
     search_note(session, 100)
-
 
 # Закриття сесії
 close_session(session)
